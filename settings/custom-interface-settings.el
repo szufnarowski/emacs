@@ -17,8 +17,10 @@
 (ido-mode t)
 
 ;; Ibuffer
-(global-set-key (kbd "C-x C-b") 'ibuffer)
+(require 'ibuffer)
+(global-set-key (kbd "C-x C-b") 'ibuffer-other-window) ;'ibuffer)
 (autoload 'ibuffer "ibuffer" "List buffers." t)
+(setq ibuffer-default-sorting-mode 'major-mode)
 
 ;; Winner
 (when (fboundp 'winner-mode)

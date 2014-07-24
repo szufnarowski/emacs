@@ -1,6 +1,38 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; General tools
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; org-mode settings
+(require 'org)
+(require 'ox-latex)
+(setq org-src-fontify-natively t)
+(add-to-list 'org-latex-packages-alist '("" "minted"))
+(setq org-latex-listings 'minted)
+(setq org-export-latex-listings 'minted)
+;; For keeping buffers up-to-date with tangled files
+;; (global-auto-revert-mode t)
+(defun revert-all-buffers ()
+          "Refreshes all open buffers from their respective files"
+          (interactive)
+          (let* ((list (buffer-list))
+                 (buffer (car list)))
+            (while buffer
+              (when (and (buffer-file-name buffer)
+                         (not (buffer-modified-p buffer)))
+                (set-buffer buffer)
+                (revert-buffer t t t))
+              (setq list (cdr list))
+              (setq buffer (car list))))
+          (message "Refreshed open files"))
+;; For tangling code automatically when saving org-files
+(defun tangle-on-save ()
+	"Extract source code from org-files upon saving."
+  (message "Tangling sources...")
+  (org-babel-tangle)
+  (revert-all-buffers))
+(add-hook 'org-mode-hook
+          (lambda ()
+			(add-hook 'after-save-hook
+					  'tangle-on-save 'make-it-local)))
 
 ;; Expand region
 (require 'expand-region)
